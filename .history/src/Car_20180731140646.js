@@ -14,9 +14,8 @@ export default class Car extends Component {
       serielist:[],
       selectserie:[],
       details:[],
-      cardetail:[],
+      cardetail:[]
 
-      test:''
     };
 }
 
