@@ -4,10 +4,7 @@ const initialState = {
     makelist:[],
     selectmake:undefined,
     modellist: [],
-    selectmodel:undefined,
-    serielist:[],
-    selectserie:[],
-
+    
     }
   
     const carReducer = (state = initialState, action) => {
@@ -16,16 +13,10 @@ const initialState = {
           return { ...state, CarDetail : action.detail  }
         case types.MAKE:
           return { ...state, makelist : action.make  }
-        case types.SELECTMAKE:
+        case types.MAKE:
           return { ...state, selectmake : action.selectmake  }
-        case types.MODELLIST:
+          case types.MODELLIST:
           return { ...state, modellist : action.modellist  }
-        case types.SELECTMODEL:
-          return { ...state, selectmodel : action.selectmodel  }
-        case types.SERIELIST:
-          return { ...state, serielist : action.serielist  }
-        case types.SELECTSERIE:
-          return { ...state, selectserie : action.selectserie  }
          
           default: return state;
           

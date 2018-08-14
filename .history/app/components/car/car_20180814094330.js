@@ -8,26 +8,68 @@ export class Car extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      
-      details: [],
-      cardetail: []
+      // carlist: [],
+      // selectmake: undefined,
+      // modellist: [],
+      // selectmodel: undefined,
+      // serielist: [],
+      // selectserie: [],
+      // details: [],
+      // cardetail: []
     }
   }
 
   componentWillMount () {
-   
+    /// เข้ามาหน้านี้จะแสดง makecar ก่อน
+    // firebaseService.database().ref('CarList').on('value', function (snapshot) {
+    //   const carlist = snapshot.val()
+    //   this.setState({ carlist: carlist })
+    // }.bind(this), function (error) {
+    //   console.log(error)
+    // })
     this.props.DisplayMake()
   }
 
-  
+  ///////// เลือก make แล้วจะเอา make ไปหา model ของ make ที่เลือก
+  // onValueChange (value) {
+  //   this.setState({
+  //     selectmake: value
+  //   })
+  //   const make = value
+  //   firebaseService.database().ref(`/CarList/${make}`).on('value', function (
+  //     snapshot
+  //   ) {
+  //     const modellist = snapshot.val()
+  //     this.setState({ modellist: modellist })
+  //   }.bind(this), function (error) {
+  //     console.log(error)
+  //   })
+  // }
 
   ////////  เลือก model แล้วจะเอา model ไปหา series
   ModelSelect (value) { 
     const model = value
     const make = this.props.selectmake
     this.props.ModelSelect(make,model)
+    // this.setState({ selectmodel: value })
+    // firebaseService
+    //   .database()
+    //   .ref(`CarList/${make}/${model}`)
+    //   .on(
+    //     'value',
+    //     function (snapshot) {
+    //       const serielist = snapshot.val()
+    //       this.setState({ serielist: serielist })
+    //     }.bind(this),
+    //     function (error) {
+    //       console.log(error)
+    //     }
+    //   )
   }
- 
+  ////////// setcar series ไว้ที่่ state
+  SerieSelect (value) {
+    this.setState({ selectserie: value })
+  }
   //////// onpress เพื่อเอา make,model,series ไปหารายละเอียดเพิ่มเติม
   CarDetail () {
     const make = this.props.selectmake

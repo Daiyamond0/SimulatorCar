@@ -43,14 +43,6 @@ const serielist = (serielist) =>{
       }
 }
 
-const selectserie = (selectserie) =>{
-    return {
-        type: types.SELECTSERIE,
-        selectserie
-      }
-}
-
-
 
 export const SetCar = (detail) => (
     dispatch => {
@@ -97,11 +89,6 @@ export const ModelSelect = (make,model) => dispatch => {
           console.log(error)
         }
       )
-   }
- ////////// setcar series ไว้ที่่ state
-   export const SerieSelect = (value) => dispatch => {
-   
-    dispatch(selectserie(value))
    }
 
 

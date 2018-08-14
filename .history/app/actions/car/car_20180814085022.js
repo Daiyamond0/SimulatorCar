@@ -29,26 +29,6 @@ const modellist = (modellist) =>{
       }
 }
 
-const selectmodel = (selectmodel) =>{
-    return {
-        type: types.SELECTMODEL,
-        selectmodel
-      }
-}
-
-const serielist = (serielist) =>{
-    return {
-        type: types.SERIELIST,
-        serielist
-      }
-}
-
-const selectserie = (selectserie) =>{
-    return {
-        type: types.SELECTSERIE,
-        selectserie
-      }
-}
 
 
 
@@ -58,7 +38,6 @@ export const SetCar = (detail) => (
         }
     )
 
-    /// เข้ามาหน้านี้จะแสดง makecar ก่อน
 export const DisplayMake = () => dispatch => {
     firebaseService.database().ref('CarList').on('value', function (snapshot) {
         const carlist = snapshot.val()
@@ -68,7 +47,7 @@ export const DisplayMake = () => dispatch => {
       })
       }
 
-  ///////// เลือก make แล้วจะเอา make ไปหา model ของ make ที่เลือก
+
  export const onValueChange = (value) => dispatch => {
        dispatch(selectmake(value))
         const make = value
@@ -80,30 +59,7 @@ export const DisplayMake = () => dispatch => {
         }.bind(this), function (error) {
           console.log(error)
         })
-}
-////////  เลือก model แล้วจะเอา model ไปหา series
-export const ModelSelect = (make,model) => dispatch => {
-    dispatch(selectmodel(model))
-    firebaseService
-      .database()
-      .ref(`CarList/${make}/${model}`)
-      .on(
-        'value',
-        function (snapshot) {
-          const serie = snapshot.val()
-          dispatch(serielist(serie))
-        }.bind(this),
-        function (error) {
-          console.log(error)
-        }
-      )
-   }
- ////////// setcar series ไว้ที่่ state
-   export const SerieSelect = (value) => dispatch => {
-   
-    dispatch(selectserie(value))
-   }
-
-
+      }
+      
 
 

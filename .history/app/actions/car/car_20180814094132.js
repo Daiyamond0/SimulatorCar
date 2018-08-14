@@ -98,7 +98,7 @@ export const ModelSelect = (make,model) => dispatch => {
         }
       )
    }
- ////////// setcar series ไว้ที่่ state
+
    export const SerieSelect = (value) => dispatch => {
    
     dispatch(selectserie(value))

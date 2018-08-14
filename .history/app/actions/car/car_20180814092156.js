@@ -43,14 +43,6 @@ const serielist = (serielist) =>{
       }
 }
 
-const selectserie = (selectserie) =>{
-    return {
-        type: types.SELECTSERIE,
-        selectserie
-      }
-}
-
-
 
 export const SetCar = (detail) => (
     dispatch => {
@@ -84,6 +76,8 @@ export const DisplayMake = () => dispatch => {
 ////////  เลือก model แล้วจะเอา model ไปหา series
 export const ModelSelect = (make,model) => dispatch => {
     dispatch(selectmodel(model))
+    const model = value
+    const make = selectmake
     firebaseService
       .database()
       .ref(`CarList/${make}/${model}`)
@@ -97,11 +91,6 @@ export const ModelSelect = (make,model) => dispatch => {
           console.log(error)
         }
       )
-   }
- ////////// setcar series ไว้ที่่ state
-   export const SerieSelect = (value) => dispatch => {
-   
-    dispatch(selectserie(value))
    }
 
 

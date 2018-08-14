@@ -8,31 +8,72 @@ export class Car extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      
+      carlist: [],
+      selectmake: undefined,
+      modellist: [],
+      selectmodel: undefined,
+      serielist: [],
+      selectserie: [],
       details: [],
       cardetail: []
     }
   }
 
   componentWillMount () {
-   
+    /// เข้ามาหน้านี้จะแสดง makecar ก่อน
+    // firebaseService.database().ref('CarList').on('value', function (snapshot) {
+    //   const carlist = snapshot.val()
+    //   this.setState({ carlist: carlist })
+    // }.bind(this), function (error) {
+    //   console.log(error)
+    // })
     this.props.DisplayMake()
   }
 
-  
+  ///////// เลือก make แล้วจะเอา make ไปหา model ของ make ที่เลือก
+  onValueChange (value) {
+    this.setState({
+      selectmake: value
+    })
+    const make = value
+    firebaseService.database().ref(`/CarList/${make}`).on('value', function (
+      snapshot
+    ) {
+      const modellist = snapshot.val()
+      this.setState({ modellist: modellist })
+    }.bind(this), function (error) {
+      console.log(error)
+    })
+  }
 
   ////////  เลือก model แล้วจะเอา model ไปหา series
-  ModelSelect (value) { 
+  ModelSelect (value) {
+    this.setState({ selectmodel: value })
     const model = value
     const make = this.props.selectmake
-    this.props.ModelSelect(make,model)
+    firebaseService
+      .database()
+      .ref(`CarList/${make}/${model}`)
+      .on(
+        'value',
+        function (snapshot) {
+          const serielist = snapshot.val()
+          this.setState({ serielist: serielist })
+        }.bind(this),
+        function (error) {
+          console.log(error)
+        }
+      )
   }
- 
+  ////////// setcar series ไว้ที่่ state
+  SerieSelect (value) {
+    this.setState({ selectserie: value })
+  }
   //////// onpress เพื่อเอา make,model,series ไปหารายละเอียดเพิ่มเติม
   CarDetail () {
     const make = this.props.selectmake
-    const model = this.props.selectmodel
-    const series = this.props.selectserie
+    const model = this.state.selectmodel
+    const series = this.state.selectserie
     if (model != null && make != null && series != null) {
       firebaseService
         .database()
@@ -65,7 +106,7 @@ export class Car extends Component {
   }
 
   render () {
-    
+    console.log(this.state.cardetail)
     return (
       <View>
         <Picker
@@ -85,7 +126,7 @@ export class Car extends Component {
           placeholder='Select One'
           placeholderStyle={{ color: '#2874F0' }}
           note={false}
-          selectedValue={this.props.selectmodel} // change to props
+          selectedValue={this.state.selectmodel} // change to props
           onValueChange={this.ModelSelect.bind(this)} // change to props
         >
           {Object.keys(this.props.modellist).map((item, index) => {
@@ -97,10 +138,10 @@ export class Car extends Component {
           placeholder='Select One'
           placeholderStyle={{ color: '#2874F0' }}
           note={false}
-          selectedValue={this.props.selectserie}
-          onValueChange={this.props.SerieSelect.bind(this)}
+          selectedValue={this.state.selectserie}
+          onValueChange={this.SerieSelect.bind(this)}
         >
-          {this.props.serielist.map((item, index) => {
+          {this.state.serielist.map((item, index) => {
             return (
               <Picker.Item
                 label={Object.values(item)[5]} // ถ้าเพิ่ม document ต้องแก้ให้เลือกที่ model car
