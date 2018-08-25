@@ -49,6 +49,16 @@ const selectserie = (selectserie) =>{
         selectserie
       }
 }
+const resetselectmake = () => {
+  return{
+    type: types.RESETSELECTMAKE
+  }
+}
+const resetselectserie = () => {
+  return{
+    type:types.RESETSELECTSERIE
+  }
+} 
 
 
 
@@ -70,6 +80,7 @@ export const DisplayMake = () => dispatch => {
 
   ///////// เลือก make แล้วจะเอา make ไปหา model ของ make ที่เลือก
  export const onValueChange = (value) => dispatch => {
+   if(value != null){
        dispatch(selectmake(value))
         const make = value
         firebaseService.database().ref(`/CarList/${make}`).on('value', function (
@@ -80,9 +91,13 @@ export const DisplayMake = () => dispatch => {
         }.bind(this), function (error) {
           console.log(error)
         })
+    }else{
+      dispatch(resetselectmake())
+    }
 }
 ////////  เลือก model แล้วจะเอา model ไปหา series
 export const ModelSelect = (make,model) => dispatch => {
+  if (model != null && make != null) {
     dispatch(selectmodel(model))
     firebaseService
       .database()
@@ -97,6 +112,10 @@ export const ModelSelect = (make,model) => dispatch => {
           console.log(error)
         }
       )
+    }
+    else{
+      dispatch(resetselectserie())
+    }
    }
  ////////// setcar series ไว้ที่่ state
    export const SerieSelect = (value) => dispatch => {

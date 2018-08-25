@@ -6,7 +6,7 @@ const initialState = {
     modellist: [],
     selectmodel:undefined,
     serielist:[],
-    selectserie:[],
+    selectserie:undefined,
 
     }
   
@@ -26,7 +26,11 @@ const initialState = {
           return { ...state, serielist : action.serielist  }
         case types.SELECTSERIE:
           return { ...state, selectserie : action.selectserie  }
-         
+        case types.RESETSELECTMAKE:
+          return { ...state,  selectmake:undefined,modellist: [],selectmodel:undefined}
+          case types.RESETSELECTSERIE:
+          return { ...state,  selectmodel:undefined, serielist:[], selectserie:undefined}  
+
           default: return state;
           
       }

@@ -33,6 +33,9 @@ export class Car extends Component {
     const make = this.props.selectmake
     const model = this.props.selectmodel
     const series = this.props.selectserie
+    console.log(make)
+    console.log(model)
+    console.log(series)
     if (model != null && make != null && series != null) {
       firebaseService
         .database()
@@ -49,6 +52,26 @@ export class Car extends Component {
           }
         )
     }
+    
+    if(model == undefined && make == undefined && series == null){
+      alert('กรุณาเลือก Make และ Model และ Serie')
+     this.setState({details: []})
+     this.setState({ cardetail: []})
+     
+  }
+  if(make != undefined && model == undefined && series == undefined){
+      
+   alert('กรุณาเลือก Model และ Serie')
+   this.setState({details: []})
+   this.setState({ cardetail: []})
+ }
+ if(make != undefined && model != undefined && series == undefined){
+      
+  alert('กรุณาเลือก Serie')
+  this.setState({details: []})
+  this.setState({ cardetail: []})
+}
+  
   }
 
   ////// เลิกรถที่จะเอาไปจำลองหน้า start.js
@@ -65,7 +88,7 @@ export class Car extends Component {
   }
 
   render () {
-    
+      
     return (
       <View>
         <Picker
@@ -76,6 +99,7 @@ export class Car extends Component {
           selectedValue={this.props.selectmake}
           onValueChange={this.props.onValueChange.bind(this)}
         >
+          <Picker.Item label='Select Make' value={null}/>
           {Object.keys(this.props.makelist).map((item, index) => {
             return <Picker.Item label={item} value={item} key={index} />
           })}
@@ -88,6 +112,7 @@ export class Car extends Component {
           selectedValue={this.props.selectmodel} // change to props
           onValueChange={this.ModelSelect.bind(this)} // change to props
         >
+        <Picker.Item label='Select Model' value={null}/>
           {Object.keys(this.props.modellist).map((item, index) => {
             return <Picker.Item label={item} value={item} key={index} />
           })}
@@ -100,6 +125,7 @@ export class Car extends Component {
           selectedValue={this.props.selectserie}
           onValueChange={this.props.SerieSelect.bind(this)}
         >
+        <Picker.Item label='Select Serie' value={null}/>
           {this.props.serielist.map((item, index) => {
             return (
               <Picker.Item
