@@ -22,6 +22,9 @@ import TimerMixin from 'react-timer-mixin'
 import firebaseService from '../../enviroments/firebase'
 import { Actions } from '../../../node_modules/react-native-router-flux'
 import timer from 'react-native-timer'
+import Speedometer from 'react-native-speedometer-chart';
+import AnimatedBar from "react-native-animated-bar";
+import { Col } from 'native-base';
 
 export class Start extends Component {
   constructor (props) {
@@ -41,6 +44,8 @@ export class Start extends Component {
       acceleration: 0,
 
       acc:[],
+
+      progress: 0,
     }
     this.ref = firebaseService.database().ref('Holds')
     this.timer = null
@@ -49,6 +54,9 @@ export class Start extends Component {
     this.generateRandomNumber = this.generateRandomNumber.bind(this)
     this.acc = null
   }
+
+ 
+
 
   newRandomNumber (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min
@@ -183,7 +191,14 @@ export class Start extends Component {
     fueluse -= totalfueluse
     return (
       <View style={styles.container}>
-    
+        <Speedometer  
+        value={Number(speed.toFixed(1))} 
+        totalValue={Number(this.props.CarDetail.MaximumSpeed)} 
+        internalColor={Number(speed.toFixed(1))<Number(this.props.CarDetail.MaximumSpeed) * 0.75 ? '#2eb82e' : "#ff0000"}
+        showText
+        showLabels
+        size={100}
+    />
         <Text>Speed: {speed.toFixed(1)} KM/H</Text>
         
             <TouchableOpacity
@@ -204,6 +219,7 @@ export class Start extends Component {
           </View>
 
         </View>
+      
         <View>
           <Text>MAKE: {this.props.CarDetail.Make}</Text>
           <Text>MODEL: {this.props.CarDetail.Model}</Text>
@@ -212,6 +228,26 @@ export class Start extends Component {
             FuelConsimption: {this.props.CarDetail.FuelConsumption} KM/L
           </Text>
           <Text>MaximumSpeed: {this.props.CarDetail.MaximumSpeed} </Text>
+        </View>
+        <View style={styles.row}>
+          
+          <AnimatedBar
+            progress={parseInt(fueluse)}
+            height={40}
+            borderColor="#DDD"
+            barColor="tomato"
+            borderRadius={5}
+            borderWidth={5}
+            duration={500}
+            row
+          >
+            <View style={[styles.row, styles.center, { flex: 1 }]}>
+              <Text style={styles.barText}>
+                {Math.round((parseInt(fueluse) *100) / this.props.CarDetail.FuelCapacity )}%
+              </Text>
+            </View>
+          </AnimatedBar>
+          
         </View>
         <View
           style={{ padding: 15, flexDirection: 'row', alignItems: 'center' }}
@@ -246,6 +282,7 @@ export class Start extends Component {
           </Modal>
 
         </View>
+
         <Text>Total Fueluse:{totalfueluse.toFixed(1)}</Text>
         <Text>acceleration: {this.state.acceleration}</Text>
 
@@ -292,5 +329,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 4,
     borderColor: 'rgba(0, 0, 0, 0.1)'
-  }
+  },
+  row: {
+    flexDirection: "row",
+  },
+  center: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  barText: {
+    backgroundColor: "transparent",
+    color: "#FFF",
+  },
 })
