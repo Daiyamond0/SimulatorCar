@@ -47,7 +47,7 @@ export class Start extends Component {
 
       progress: 0,
     }
-    this.ref = firebaseService.database().ref('Holds')
+    this.ref = firebaseService.database().ref('Speed')
     this.timer = null
     this.addOne = this.addOne.bind(this)
     this.stopTimer = this.stopTimer.bind(this)
@@ -150,7 +150,7 @@ export class Start extends Component {
     })
   }
   Reset () {
-    firebaseService.database().ref('Holds').remove()
+    firebaseService.database().ref('Speed').remove()
     Actions.refresh('start')
   }
 
