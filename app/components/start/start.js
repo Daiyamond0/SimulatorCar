@@ -46,6 +46,8 @@ export class Start extends Component {
       acc:[],
 
       progress: 0,
+      totalfueluse:0,
+      distanceArray:[0,0]
     }
     this.ref = firebaseService.database().ref('Speed')
     this.timer = null
@@ -53,6 +55,7 @@ export class Start extends Component {
     this.stopTimer = this.stopTimer.bind(this)
     this.generateRandomNumber = this.generateRandomNumber.bind(this)
     this.acc = null
+    this.intervalId = null;
   }
 
  
@@ -64,73 +67,142 @@ export class Start extends Component {
 
   generateRandomNumber () { 
     this.setState({ acceleration: 30 })
-    
-    // timer.clearTimeout(this);
     timer.setTimeout('show',()=>
     this.setState({acceleration: 50})
     ,5000)
-    
-    
     timer.setTimeout('show2',()=>this.setState({acceleration: 70}),10000)
+
+    setTimeout(()=>{ 
+      const distancebetween = (this.state.distanceArray[this.state.distanceArray.length - 1]) - (this.state.distanceArray[this.state.distanceArray.length - 2])
+      const currentSpeed = this.state.currentSpeed
+      var totalfueluse  
+      if(currentSpeed >80 && currentSpeed<=100){
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption *0.2))
+      }else if(currentSpeed >100 && currentSpeed<=120){
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption *0.4))
+      }
+      else if(currentSpeed >120 && currentSpeed<=140){
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption *0.5))
+    } else if(currentSpeed >140 && currentSpeed<=this.props.CarDetail.MaximumSpeed){
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption *0.6))
+    }
+      else{
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption *0.2))
+      }
+      this.setState({totalfueluse:this.state.totalfueluse + totalfueluse})
+    },2000)
   }
 
   addOne () {
     if (this.state.currentSpeed < this.props.CarDetail.MaximumSpeed) {
+      const distancebetween = (this.state.distanceArray[this.state.distanceArray.length - 1]) - (this.state.distanceArray[this.state.distanceArray.length - 2])
       const currentSpeed = this.state.currentSpeed
-      const totalfueluse = this.state.sum / this.props.CarDetail.FuelConsumption
+      var totalfueluse  
+      if(currentSpeed >80 && currentSpeed<=100){
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.1))
+      }else if(currentSpeed >100 && currentSpeed<=120){
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.2))
+      }
+      else if(currentSpeed >120 && currentSpeed<=140){
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.25))
+    } else if(currentSpeed >140 && currentSpeed<=this.props.CarDetail.MaximumSpeed){
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.3))
+    }
+      else{
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption ))
+      }
+      this.setState({totalfueluse:this.state.totalfueluse + totalfueluse})
+      
+      
       clearTimeout(this.timer)
       this.setState({ currentSpeed: currentSpeed + 10 * (5 / 18) }) // 10 คึอความเร็วคงที่เปลียนได้ ,5/18 คือ m/s to km/h
       this.setState({ arrVar: [...this.state.arrVar, parseFloat(currentSpeed,10)] })
-      this.timer = setTimeout(this.addOne, 0.1)
+      this.timer = setTimeout(this.addOne, 100)
       var numbers = this.state.arrVar
       var sum = 0
+
       for (var i = 0; i < numbers.length; i++) {
         sum += Number.parseFloat(numbers[i], 10)
       }
       this.ref.push({
         speedId: this.state.speedId,
         distance: parseFloat(currentSpeed,10),
-        totalfueluse: parseFloat(totalfueluse,10),
+        totalfueluse: parseFloat(this.state.totalfueluse,10),
         acceleration: this.state.acceleration
       })
       this.setState({
         speedId: this.state.speedId + 1,
-        sum: sum / 1000
+        sum: sum / 1000,
+        distanceArray:[...this.state.distanceArray, sum /1000]
+
       })
     } else {
       const currentSpeed = this.state.currentSpeed
-      const totalfueluse = this.state.sum / this.props.CarDetail.FuelConsumption
+      const distancebetween = (this.state.distanceArray[this.state.distanceArray.length - 1]) - (this.state.distanceArray[this.state.distanceArray.length - 2])
+      var totalfueluse  
+      if(currentSpeed >80 && currentSpeed<=100){
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.1))
+      }else if(currentSpeed >100 && currentSpeed<=120){
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.2))
+      }
+      else if(currentSpeed >120 && currentSpeed<=140){
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption  - (this.props.CarDetail.FuelConsumption *0.25))
+    } else if(currentSpeed >140 && currentSpeed<=this.props.CarDetail.MaximumSpeed){
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.3))
+    }
+      else{
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption ))
+      }
+      this.setState({totalfueluse:this.state.totalfueluse + totalfueluse})
+     
       const x = this.state.acceleration + 20
       clearTimeout(this.timer)
       this.setState({ currentSpeed: this.props.CarDetail.MaximumSpeed }) // 10 คึอความเร็วคงที่เปลียนได้ ,5/18 คือ m/s to km/h
       this.setState({ arrVar: [...this.state.arrVar, parseFloat(currentSpeed,10)] })
-      this.timer = setTimeout(this.addOne, 0.1)
+      this.timer = setTimeout(this.addOne, 100)
       var numbers = this.state.arrVar
       var sum = 0
       for (var i = 0; i < numbers.length; i++) {
         sum += Number.parseFloat(numbers[i], 10)
+
       }
       this.ref.push({
         speedId: this.state.speedId,
         distance: parseFloat(currentSpeed,10),
-        totalfueluse: parseFloat(totalfueluse,10),
+        totalfueluse: parseFloat(this.state.totalfueluse,10),
         acceleration: this.state.acceleration
       })
       this.setState({
         speedId: this.state.speedId + 1,
-        sum: sum / 1000
+        sum: sum / 1000,
+        distanceArray:[...this.state.distanceArray,sum /1000]
       })
     }
   }
   stopTimer () {
     this.setState({ acceleration: 0 })
     const currentSpeed = this.state.currentSpeed
-    const totalfueluse = this.state.sum / this.props.CarDetail.FuelConsumption
+    const distancebetween = (this.state.distanceArray[this.state.distanceArray.length - 1]) - (this.state.distanceArray[this.state.distanceArray.length - 2])
+    var totalfueluse  
+    if(currentSpeed >80 && currentSpeed<=100){
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.1))
+    }else if(currentSpeed >100 && currentSpeed<=120){
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.2))
+    }
+    else if(currentSpeed >120 && currentSpeed<=140){
+    totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.25))
+  } else if(currentSpeed >140 && currentSpeed<=this.props.CarDetail.MaximumSpeed){
+    totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.3))
+  }
+    else{
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption ) )
+    }
+    this.setState({totalfueluse:this.state.totalfueluse + totalfueluse})
     clearTimeout(this.timer)
     if (currentSpeed - 0.1 >= 0) {
       this.setState({ currentSpeed: currentSpeed - 10 * (5 / 18) })
       this.setState({ arrVar: [...this.state.arrVar, parseFloat(currentSpeed,10)] })
-      this.timer = setTimeout(this.stopTimer, 0.1)
+      this.timer = setTimeout(this.stopTimer, 100)
     }
 
     var numbers = this.state.arrVar
@@ -141,12 +213,14 @@ export class Start extends Component {
     this.ref.push({
       speedId: this.state.speedId,
       distance: parseFloat(currentSpeed,10),
-      totalfueluse:parseFloat(totalfueluse,10),
-      acceleration: this.state.acceleration
+      totalfueluse:parseFloat(this.state.totalfueluse,10),
+      acceleration: this.state.acceleration,
+      
     })
     this.setState({
       speedId: this.state.speedId + 1,
-      sum: sum / 1000
+      sum: sum / 1000,
+      distanceArray:[...this.state.distanceArray,sum /1000]
     })
   }
   Reset () {
@@ -172,11 +246,17 @@ export class Start extends Component {
     // TimerMixin.setInterval(() => {
     // this.setState({fueluse:this.state.fueluse - 1})
     //   }, 5000);
-    this.setState({ fueluse: this.state.fueluse })
+    // this.setState({ fueluse: this.state.fueluse })
+  
+    
+    
+
+
   }
 
   componentWillUnmount(){
     timer.clearTimeout(this);
+    clearInterval(this.intervalId)
   }
 
   
@@ -184,11 +264,12 @@ export class Start extends Component {
     // TimerMixin.setTimeout(() => {
     //       console.log('value',this.state.currentSpeed.toFixed(1));
     //     }, 0.1);
-
+    console.log(this.state.totalfueluse)
     var fueluse = this.state.fueluse
     const speed = this.state.currentSpeed
-    var totalfueluse = this.state.sum / this.props.CarDetail.FuelConsumption
+    var totalfueluse = this.state.totalfueluse
     fueluse -= totalfueluse
+    const fuelconsumption = this.state.distanceArray[this.state.distanceArray.length- 1] / this.state.totalfueluse // ระยะทางที่เพิ่มขึ้นครั้งสุดท้าย / น้ำมันที่ใช้
     return (
       <View style={styles.container}>
         <Speedometer  
@@ -282,7 +363,7 @@ export class Start extends Component {
           </Modal>
 
         </View>
-
+        <Text>Fuel Consumtion:{fuelconsumption.toFixed(1)}</Text>
         <Text>Total Fueluse:{totalfueluse.toFixed(1)}</Text>
         <Text>acceleration: {this.state.acceleration}</Text>
 

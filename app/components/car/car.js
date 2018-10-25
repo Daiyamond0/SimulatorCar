@@ -145,9 +145,12 @@ export class Car extends Component {
             renderRow={item => {
               return (
                 <View>
-                  <Text>Model: {item.Model}</Text>
-                  <Text>Speed: {item.Speed}</Text>
+                  <Text>Car: {item.Make} {item.Model}</Text>
+                  <Text>Speed: {item.Speed} KM/H</Text>
                   <Text>FuelType: {item.FuelType.FuelType}</Text>
+                  <Text>FuelCapacity: {item.FuelCapacity} L</Text>
+                  <Text>FuelConsumption: {item.FuelConsumption} KM/L</Text>
+                  <Text>CO2Emission: {item.FuelType.CO2Emission} G/KM</Text>
                 </View>
               )
             }}
