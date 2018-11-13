@@ -11,11 +11,12 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Button,
+  
   Animated,
   TouchableWithoutFeedback,
   Image,
-  TextInput
+  TextInput,
+  ScrollView
 } from 'react-native'
 import Modal from 'react-native-modal'
 import TimerMixin from 'react-timer-mixin'
@@ -24,7 +25,7 @@ import { Actions } from '../../../node_modules/react-native-router-flux'
 import timer from 'react-native-timer'
 import Speedometer from 'react-native-speedometer-chart';
 import AnimatedBar from "react-native-animated-bar";
-import { Col } from 'native-base';
+import { Col,Button } from 'native-base';
 
 export class Start extends Component {
   constructor (props) {
@@ -73,6 +74,7 @@ export class Start extends Component {
     timer.setTimeout('show2',()=>this.setState({acceleration: 70}),10000)
 
     setTimeout(()=>{ 
+      
       const distancebetween = (this.state.distanceArray[this.state.distanceArray.length - 1]) - (this.state.distanceArray[this.state.distanceArray.length - 2])
       const currentSpeed = this.state.currentSpeed
       var totalfueluse  
@@ -109,7 +111,7 @@ export class Start extends Component {
       totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.3))
     }
       else{
-        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption ))
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption *0.15 ))
       }
       this.setState({totalfueluse:this.state.totalfueluse + totalfueluse})
       
@@ -151,7 +153,7 @@ export class Start extends Component {
       totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.3))
     }
       else{
-        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption ))
+        totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption * 0.15 ))
       }
       this.setState({totalfueluse:this.state.totalfueluse + totalfueluse})
      
@@ -195,7 +197,7 @@ export class Start extends Component {
     totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption - (this.props.CarDetail.FuelConsumption *0.3))
   }
     else{
-      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption ) )
+      totalfueluse =   distancebetween / (this.props.CarDetail.FuelConsumption + (this.props.CarDetail.FuelConsumption * 0.15) )
     }
     this.setState({totalfueluse:this.state.totalfueluse + totalfueluse})
     clearTimeout(this.timer)
@@ -225,6 +227,7 @@ export class Start extends Component {
   }
   Reset () {
     firebaseService.database().ref('Speed').remove()
+    Actions.replace('start')
     Actions.refresh('start')
   }
 
@@ -271,103 +274,239 @@ export class Start extends Component {
     fueluse -= totalfueluse
     const fuelconsumption = this.state.distanceArray[this.state.distanceArray.length- 1] / this.state.totalfueluse // ระยะทางที่เพิ่มขึ้นครั้งสุดท้าย / น้ำมันที่ใช้
     return (
-      <View style={styles.container}>
-        <Speedometer  
-        value={Number(speed.toFixed(1))} 
-        totalValue={Number(this.props.CarDetail.MaximumSpeed)} 
-        internalColor={Number(speed.toFixed(1))<Number(this.props.CarDetail.MaximumSpeed) * 0.75 ? '#2eb82e' : "#ff0000"}
-        showText
-        showLabels
-        size={100}
-    />
-        <Text>Speed: {speed.toFixed(1)} KM/H</Text>
-        
-            <TouchableOpacity
-              onPressIn={this.addOne.bind(this)}
-              onPressOut={this.stopTimer.bind(this)}
-              onLongPress={this.generateRandomNumber.bind(this)}
-            >
-              <Image source={require('../../../icons/icons-add.png')}  />
-            </TouchableOpacity>
-          
-          
-        
-        {/* <Text>{this.state.arrVar+","}</Text> AllSpeed */}
-        <Text>Distance: {this.state.sum.toFixed(2)} KM</Text>
-        <View style={{ flexDirection: 'row', margin: 10 }}>
-          <View>
-            <Button title='Reset' onPress={() => this.Reset()} />
-          </View>
-
-        </View>
-      
-        <View>
-          <Text>MAKE: {this.props.CarDetail.Make}</Text>
-          <Text>MODEL: {this.props.CarDetail.Model}</Text>
-          <Text>FUELCAPACITY: {this.props.CarDetail.FuelCapacity} L</Text>
-          <Text>
-            FuelConsimption: {this.props.CarDetail.FuelConsumption} KM/L
-          </Text>
-          <Text>MaximumSpeed: {this.props.CarDetail.MaximumSpeed} </Text>
-        </View>
-        <View style={styles.row}>
-          
-          <AnimatedBar
-            progress={parseInt(fueluse)}
-            height={40}
-            borderColor="#DDD"
-            barColor="tomato"
-            borderRadius={5}
-            borderWidth={5}
-            duration={500}
-            row
-          >
-            <View style={[styles.row, styles.center, { flex: 1 }]}>
-              <Text style={styles.barText}>
-                {Math.round((parseInt(fueluse) *100) / this.props.CarDetail.FuelCapacity )}%
-              </Text>
+      <View>
+      <ScrollView>
+      <Text style={{fontSize:20,color:'black',marginTop:20,marginLeft:30}}>Simulator Car</Text>
+            <View style={{flexDirection:'row',marginTop:15,alignSelf:'center'}}>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'white',borderColor:'#6a83fb',borderWidth:0.5,borderTopLeftRadius:5,borderBottomLeftRadius:5}}>
+                    <Text style={{fontSize:11,color:'#6a83fb',marginLeft:15}}>Brand</Text>
+                    </View>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'#6a83fb',borderColor:'#6a83fb',borderWidth:0.5,borderTopRightRadius:5,borderBottomRightRadius:5}}>
+                    <Text style={{fontSize:13,color:'white',marginLeft:15}}>{this.props.CarDetail.Make}</Text>
+                    </View>
             </View>
-          </AnimatedBar>
-          
-        </View>
-        <View
-          style={{ padding: 15, flexDirection: 'row', alignItems: 'center' }}
-        >
-
-          <Text>Fueluse: {parseInt(fueluse)} </Text>
-          <Text> Of {this.props.CarDetail.FuelCapacity} L </Text>
-          <Button title='fueluse' onPress={this.toggleModal.bind(this)} />
-          <Modal isVisible={this.state.isModalVisible}>
-            <View style={styles.modalContent}>
-              <Text>Enter Fueluse</Text>
-              <TextInput
+            <View style={{flexDirection:'row',marginTop:15,alignSelf:'center'}}>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'white',borderColor:'#6a83fb',borderWidth:0.5,borderTopLeftRadius:5,borderBottomLeftRadius:5}}>
+                    <Text style={{fontSize:11,color:'#6a83fb',marginLeft:15}}>Model</Text>
+                    </View>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'#6a83fb',borderColor:'#6a83fb',borderWidth:0.5,borderTopRightRadius:5,borderBottomRightRadius:5}}>
+                    <Text style={{fontSize:13,color:'white',marginLeft:15}}>{this.props.CarDetail.Model}</Text>
+                    </View>
+            </View>
+            <View style={{flexDirection:'row',marginTop:15,alignSelf:'center'}}>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'white',borderColor:'#6a83fb',borderWidth:0.5,borderTopLeftRadius:5,borderBottomLeftRadius:5}}>
+                    <Text style={{fontSize:11,color:'#6a83fb',marginLeft:15}}>Fuel Volume Capacity</Text>
+                    </View>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'#6a83fb',borderColor:'#6a83fb',borderWidth:0.5,borderTopRightRadius:5,borderBottomRightRadius:5}}>
+                    <Text style={{fontSize:13,color:'white',marginLeft:15}}>{this.props.CarDetail.FuelCapacity} L</Text>
+                    </View>
+            </View>
+            <View style={{flexDirection:'row',marginTop:15,alignSelf:'center'}}>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'white',borderColor:'#6a83fb',borderWidth:0.5,borderTopLeftRadius:5,borderBottomLeftRadius:5}}>
+                    <Text style={{fontSize:11,color:'#6a83fb',marginLeft:15}}>Fuel Consumption</Text>
+                    </View>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'#6a83fb',borderColor:'#6a83fb',borderWidth:0.5,borderTopRightRadius:5,borderBottomRightRadius:5}}>
+                    <Text style={{fontSize:13,color:'white',marginLeft:15}}>{this.props.CarDetail.FuelConsumption} km/L</Text>
+                    </View>
+            </View>
+            <View style={{flexDirection:'row',marginTop:15,alignSelf:'center'}}>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'white',borderColor:'#6a83fb',borderWidth:0.5,borderTopLeftRadius:5,borderBottomLeftRadius:5}}>
+                    <Text style={{fontSize:11,color:'#6a83fb',marginLeft:15}}>Maximum Speed</Text>
+                    </View>
+                    <View style={{justifyContent:'center',width:135,height:40,backgroundColor:'#6a83fb',borderColor:'#6a83fb',borderWidth:0.5,borderTopRightRadius:5,borderBottomRightRadius:5}}>
+                    <Text style={{fontSize:13,color:'white',marginLeft:15}}>{this.props.CarDetail.MaximumSpeed} km/hr</Text>
+                    </View>
+            </View>
+            <View style={{height:450,backgroundColor:'#52dec3',marginTop:20}}>
+              <View style={{height:150,width:340,backgroundColor:'white',marginTop:10,marginLeft:10}}>
+                <Text style={{fontSize:15,color:'black',marginTop:10,marginLeft:20}}>Speed</Text>                  
+                  <View style={{marginTop:10,height:90,width:280,backgroundColor:'#6a83fb',alignSelf:'center',borderRadius:10}}>
+                  <View style={{flexDirection:'row',alignItems:'center'}}>
+                  <Image
+                              style={{width: 80, height: 80,marginLeft:15,marginTop:5}}
+                              source={require('./icon.png')}
+                                
+                          />
+                          <View style={{flexDirection:'column',marginLeft:80}}>
+                          <Text style={{fontSize:25,color:'white',marginLeft:10}}>{speed.toFixed(1)}</Text>
+                          <Text style={{fontSize:20,color:'white'}}>km/h</Text>
+                          </View>
+                  </View>
+                  </View>
+              </View>
+              <View style={{height:150,width:340,backgroundColor:'white',marginTop:15,marginLeft:10}}>
+                <Text style={{fontSize:15,color:'black',marginTop:10,marginLeft:20}}>Fuel Use</Text>                  
+                  <View style={{marginTop:10,height:90,width:280,backgroundColor:'#6a83fb',alignSelf:'center',borderRadius:10}}>
+                  <View style={{flexDirection:'row',alignItems:'center'}}>
+                  <Image
+                              style={{width: 80, height: 80,marginLeft:15,marginTop:5}}
+                              source={require('./fuel.png')}
+                                
+                          />
+                          <View style={{flexDirection:'column',marginLeft:65}}>
+                          <Text style={{fontSize:25,color:'white'}}>{parseInt(fueluse)} / {this.props.CarDetail.FuelCapacity}</Text>
+                          <Text style={{fontSize:20,color:'white',marginLeft:32}}>L</Text>
+                          </View>
+                  </View>
+                  </View>
+              </View>
+              
+              <View style={{height:75,width:380,backgroundColor:'white',marginTop:50}}>
+              <View style={{marginLeft:10,flexDirection:'row'}}>
+              <Text style={{color:'#6a83fb',fontSize:12,marginTop:10}}>Accelerator: {this.state.acceleration} %</Text>
+              <Button style={{marginLeft:150,width:100,marginTop:5,height:28,backgroundColor:'#6a83fb',justifyContent:'center'}} onPress={this.toggleModal.bind(this)}>
+              <Text style={{color:'white',fontSize:10}}>Fuel Refill</Text>
+              </Button>
+              </View>
+              <Modal isVisible={this.state.isModalVisible}>
+             <View style={styles.modalContent}>
+               <Text>Enter Fueluse</Text>
+               <TextInput
                 keyboardType='numeric'
                 onChangeText={fuelusemodal => this.setState({ fuelusemodal })}
               />
               <View style={{ flexDirection: 'row' }}>
                 <View style={{ marginRight: 10 }}>
                   <Button
-                    title='OK'
-                    onPress={() => this.fuelUse(totalfueluse)}
-                  />
+                    onPress={() => this.fuelUse(totalfueluse)}>
+                  <Text>OK</Text>
+                  </Button>
                 </View>
                 <View>
                   <Button
-                    title='Cancel'
-                    onPress={this.toggleModal.bind(this)}
-                  />
+                    onPress={this.toggleModal.bind(this)}>
+                    <Text>Cancel</Text>
+                  </Button>
                 </View>
               </View>
 
             </View>
           </Modal>
+              <View style={{marginLeft:10,flexDirection:'row'}}>
+              <Text style={{color:'#6a83fb',fontSize:12,marginTop:15}}>Fuel Volume Used: {totalfueluse.toFixed(1)} L</Text>
+              <Button style={{marginLeft:118,width:100,marginTop:5,height:28,backgroundColor:'#6a83fb',justifyContent:'center'}} onPress={() => this.Reset()}>
+              <Text style={{color:'white',fontSize:10}}>Reset</Text>
+              </Button>
+              </View>
+              </View>
+              <View style={{flexDirection:'row',alignSelf:'center',position:'absolute',marginTop:340}}>
+              <View style={{height:110,width:110,backgroundColor:'#efec1a',borderRadius:60}}></View>
+              </View>
+            <View style={{flexDirection:'row',alignSelf:'center',position:'absolute',marginTop:350}}>
+            <TouchableOpacity
+              onPressIn={this.addOne.bind(this)}
+              onPressOut={this.stopTimer.bind(this)}
+              onLongPress={this.generateRandomNumber.bind(this)}
+            >
+            <Image
+                              style={{width: 80, height: 80,marginTop:5}}
+                              source={require('./ac.png')}
+                              
+                              />
+                              </TouchableOpacity>
+                          </View>
+                              </View>
 
-        </View>
-        <Text>Fuel Consumtion:{fuelconsumption.toFixed(1)}</Text>
-        <Text>Total Fueluse:{totalfueluse.toFixed(1)}</Text>
-        <Text>acceleration: {this.state.acceleration}</Text>
+            </ScrollView>
+    </View>
 
-      </View>
+    //   <View style={styles.container}>
+    //     <Speedometer  
+    //     value={Number(speed.toFixed(1))} 
+    //     totalValue={Number(this.props.CarDetail.MaximumSpeed)} 
+    //     internalColor={Number(speed.toFixed(1))<Number(this.props.CarDetail.MaximumSpeed) * 0.75 ? '#2eb82e' : "#ff0000"}
+    //     showText
+    //     showLabels
+    //     size={100}
+    // />
+    //     <Text>Speed: {speed.toFixed(1)} KM/H</Text>
+        
+    //         <TouchableOpacity
+    //           onPressIn={this.addOne.bind(this)}
+    //           onPressOut={this.stopTimer.bind(this)}
+    //           onLongPress={this.generateRandomNumber.bind(this)}
+    //         >
+    //           <Image source={require('../../../icons/icons-add.png')}  />
+    //         </TouchableOpacity>
+          
+          
+        
+    //     {/* <Text>{this.state.arrVar+","}</Text> AllSpeed */}
+    //     <Text>Distance: {this.state.sum.toFixed(2)} KM</Text>
+    //     <View style={{ flexDirection: 'row', margin: 10 }}>
+    //       <View>
+    //         <Button title='Reset' onPress={() => this.Reset()} />
+    //       </View>
+
+    //     </View>
+      
+    //     <View>
+    //       <Text>MAKE: {this.props.CarDetail.Make}</Text>
+    //       <Text>MODEL: {this.props.CarDetail.Model}</Text>
+    //       <Text>FUELCAPACITY: {this.props.CarDetail.FuelCapacity} L</Text>
+    //       <Text>
+    //         FuelConsimption: {this.props.CarDetail.FuelConsumption} KM/L
+    //       </Text>
+    //       <Text>MaximumSpeed: {this.props.CarDetail.MaximumSpeed} </Text>
+    //     </View>
+    //     <View style={styles.row}>
+          
+    //       <AnimatedBar
+    //         progress={parseInt(fueluse)}
+    //         height={40}
+    //         borderColor="#DDD"
+    //         barColor="tomato"
+    //         borderRadius={5}
+    //         borderWidth={5}
+    //         duration={500}
+    //         row
+    //       >
+    //         <View style={[styles.row, styles.center, { flex: 1 }]}>
+    //           <Text style={styles.barText}>
+    //             {Math.round((parseInt(fueluse) *100) / this.props.CarDetail.FuelCapacity )}%
+    //           </Text>
+    //         </View>
+    //       </AnimatedBar>
+          
+    //     </View>
+    //     <View
+    //       style={{ padding: 15, flexDirection: 'row', alignItems: 'center' }}
+    //     >
+
+    //       <Text>Fueluse: {parseInt(fueluse)} </Text>
+    //       <Text> Of {this.props.CarDetail.FuelCapacity} L </Text>
+    //       <Button title='fueluse' onPress={this.toggleModal.bind(this)} />
+    //       <Modal isVisible={this.state.isModalVisible}>
+    //         <View style={styles.modalContent}>
+    //           <Text>Enter Fueluse</Text>
+    //           <TextInput
+    //             keyboardType='numeric'
+    //             onChangeText={fuelusemodal => this.setState({ fuelusemodal })}
+    //           />
+    //           <View style={{ flexDirection: 'row' }}>
+    //             <View style={{ marginRight: 10 }}>
+    //               <Button
+    //                 title='OK'
+    //                 onPress={() => this.fuelUse(totalfueluse)}
+    //               />
+    //             </View>
+    //             <View>
+    //               <Button
+    //                 title='Cancel'
+    //                 onPress={this.toggleModal.bind(this)}
+    //               />
+    //             </View>
+    //           </View>
+
+    //         </View>
+    //       </Modal>
+
+    //     </View>
+    //     <Text>Fuel Consumtion:{fuelconsumption.toFixed(1)}</Text>
+    //     <Text>Total Fueluse:{totalfueluse.toFixed(1)}</Text>
+    //     <Text>acceleration: {this.state.acceleration}</Text>
+
+    //   </View>
     )
   }
 }
