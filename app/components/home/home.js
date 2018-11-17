@@ -23,6 +23,9 @@ import firebaseService from '../../enviroments/firebase'
 import { Actions } from '../../../node_modules/react-native-router-flux'
 
 export class Home extends Component {
+  componentWillMount(){
+    // firebaseService.database().ref('SimulateCar').remove()
+  }
   render () {
     return (
       <View style={styles.container}>

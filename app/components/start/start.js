@@ -226,9 +226,11 @@ export class Start extends Component {
     })
   }
   Reset () {
+    
     firebaseService.database().ref('Speed').remove()
-    Actions.replace('start')
+    clearTimeout(this.timer)
     Actions.refresh('start')
+    Actions.replace('start')
   }
 
   toggleModal () {
@@ -258,8 +260,10 @@ export class Start extends Component {
   }
 
   componentWillUnmount(){
+    this.ref.onDisconnect()
     timer.clearTimeout(this);
     clearInterval(this.intervalId)
+    
   }
 
   
